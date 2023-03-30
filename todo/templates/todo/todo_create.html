@@ -1,0 +1,18 @@
+{% extends 'todo/base.html' %}
+{% block title %}Create Task{% endblock %}
+
+{% block content %}
+
+<div class="header-bar">
+    <a href="{% url 'todo-list' %}">&#8592; Back</a>
+</div>
+
+<div class="card-body">
+    <form action="" method="post">
+        {% csrf_token %}
+        {{  form.as_p }}
+        <input class="button" type="submit" value="Save Task">
+    </form>
+</div>
+
+{% endblock content %}

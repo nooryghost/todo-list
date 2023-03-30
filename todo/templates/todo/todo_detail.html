@@ -1,0 +1,9 @@
+{% extends "todo/base.html" %}
+{% block title %}Todo Detail{% endblock %}
+
+
+{% block content %}
+    {% for task in tasks %}
+        <h4>{{ task.title }}</h4>
+    {% endfor %}
+{% endblock %}
