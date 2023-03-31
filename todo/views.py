@@ -30,11 +30,11 @@ class TodoList(LoginRequiredMixin, ListView):
         context["tasks"] = context["tasks"].filter(author=self.request.user)
         context["count"] = context["tasks"].filter(completed=False).count()
 
-        search_input = self.request.GET.get("search-area") or ""
+        search_input = self.request.GET.get("search-area") or " "
 
         if search_input:
             context["tasks"] = context["tasks"].filter(title__icontains = search_input)
-            context["search_input"] = context["tasks"].filter(search_input)
+            context["search_input"] = search_input
 
         return context
 
