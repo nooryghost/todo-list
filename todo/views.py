@@ -1,5 +1,5 @@
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.edit import FormView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
@@ -30,7 +30,7 @@ class TodoList(LoginRequiredMixin, ListView):
         context["tasks"] = context["tasks"].filter(author=self.request.user)
         context["count"] = context["tasks"].filter(completed=False).count()
 
-        search_input = self.request.GET.get("search-area") or " "
+        search_input = self.request.GET.get("search-area") or ""
 
         if search_input:
             context["tasks"] = context["tasks"].filter(title__icontains = search_input)
@@ -43,18 +43,26 @@ class TodoDetail(LoginRequiredMixin, DetailView):
     template_name = "todo/todo_detail.html"
     context_object_name = "tasks"
 
-class TodoUpdate(LoginRequiredMixin, UpdateView):
+class TodoUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Todo
     fields = ["title", "description", "completed"]
     context_object_name = "tasks"
     template_name = "todo/todo_update.html"
     success_url = reverse_lazy("todo-list")
 
-class TodoDelete(LoginRequiredMixin, DeleteView):
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
+
+class TodoDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Todo
     template_name = "todo/todo_delete.html"
     context_object_name = "tasks"
     success_url = reverse_lazy("todo-list")
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
 
 class CustomLoginView(LoginView):
     template_name = "todo/login.html"
